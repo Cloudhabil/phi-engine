@@ -29,5 +29,11 @@ ignore_missing_imports = true
 disallow_untyped_defs = false
 disable_error_code = ["type-arg", "no-any-return"]
 
+[tool.hatch.build]
+exclude = [".github/", ".gitignore", ".ruff_cache/", "dist/", "tests/"]
+
 [tool.hatch.build.targets.wheel]
-packages = ["phi_engine"]
+packages = ["."]
+
+[tool.hatch.build.targets.wheel.sources]
+"." = "phi_engine"

@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
@@ -26,7 +27,7 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Lint
-        run: ruff check . --line-length=100
+        run: ruff check --line-length=100 --exclude=.github *.py adapters/ api/ demo/ tests/
 
       - name: Test
         run: pytest tests/ -v
@@ -48,11 +49,12 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build
 
-      - name: Verify wheel
+      - name: Verify wheel install
         run: |
           pip install dist/*.whl
           python -c "from phi_engine import PhiEngine; print('import OK')"
           python -c "from phi_engine.adapters.photosynthesis import PhotosynthesisAdapter; print('adapter OK')"
+          python -c "from phi_engine.photosynthesis_constants import NATURAL_STEPS; print(f'{len(NATURAL_STEPS)} steps OK')"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
