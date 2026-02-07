@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install package
-        run: pip install -e ".[dev]"
+        run: pip install ".[dev]"
 
       - name: Lint
         run: ruff check --line-length=100 --exclude=.github *.py adapters/ api/ demo/ tests/
