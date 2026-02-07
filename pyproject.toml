@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "phi-engine"
+version = "1.618.0"
+description = "Zero-parameter algebraic prediction engine based on PHI"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = []  # Core has ZERO dependencies (stdlib math only)
+
+[project.optional-dependencies]
+api = ["fastapi>=0.100", "uvicorn>=0.20", "pydantic>=2.0"]
+demo = ["streamlit>=1.30", "stripe>=7.0", "flask>=3.0", "plotly>=5.0"]
+notebooks = ["jupyter>=1.0", "matplotlib>=3.7"]
+full = ["phi-engine[api,demo,notebooks]"]
+dev = ["pytest>=7.0", "ruff>=0.1", "mypy>=1.0"]
+
+[project.scripts]
+phi-engine = "phi_engine.api.server:main"
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = false
+disable_error_code = ["type-arg", "no-any-return"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["phi_engine"]

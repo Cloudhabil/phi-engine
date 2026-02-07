@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  phi-engine-demo:
+    build:
+      context: ../..
+      dockerfile: phi_engine/demo/Dockerfile
+    container_name: phi-engine-demo
+    ports:
+      - "4242:4242"   # Stripe webhook
+      - "8501:8501"   # Streamlit demo
+      - "8200:8200"   # FastAPI REST API
+    env_file:
+      - .env
+    volumes:
+      - ./phi_engine_demo.db:/app/phi_engine_demo.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  default:
+    name: phi-engine-network
