@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: repo
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -24,16 +26,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install package
-        run: pip install ".[dev]"
+        run: pip install "./repo[dev]"
 
       - name: Lint
+        working-directory: repo
         run: ruff check --line-length=100 --exclude=.github *.py adapters/ api/ demo/ tests/
 
       - name: Test
-        run: python -m pytest tests/ -v --import-mode=importlib
-        env:
-          # Ensure pytest uses installed phi_engine, not local __init__.py
-          PY_IGNORE_IMPORTMISMATCH: "1"
+        working-directory: repo/tests
+        run: python -m pytest -v
 
   build:
     runs-on: ubuntu-latest
