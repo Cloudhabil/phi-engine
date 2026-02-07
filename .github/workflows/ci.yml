@@ -30,7 +30,10 @@ jobs:
         run: ruff check --line-length=100 --exclude=.github *.py adapters/ api/ demo/ tests/
 
       - name: Test
-        run: pytest tests/ -v
+        run: python -m pytest tests/ -v --import-mode=importlib
+        env:
+          # Ensure pytest uses installed phi_engine, not local __init__.py
+          PY_IGNORE_IMPORTMISMATCH: "1"
 
   build:
     runs-on: ubuntu-latest
@@ -50,8 +53,10 @@ jobs:
         run: python -m build
 
       - name: Verify wheel install
+        shell: bash
         run: |
           pip install dist/*.whl
+          cd /tmp
           python -c "from phi_engine import PhiEngine; print('import OK')"
           python -c "from phi_engine.adapters.photosynthesis import PhotosynthesisAdapter; print('adapter OK')"
           python -c "from phi_engine.photosynthesis_constants import NATURAL_STEPS; print(f'{len(NATURAL_STEPS)} steps OK')"
